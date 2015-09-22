@@ -1,0 +1,25 @@
+{
+    "appKeys": {
+        "KEY_SUNRISE": 0,
+        "KEY_SUNSET": 1
+    },
+    "capabilities": [
+        ""
+    ],
+    "companyName": "james.b.price@gmail.com",
+    "longName": "James's Watchface",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "3",
+    "shortName": "James's Watchface",
+    "targetPlatforms": [
+        "aplite"
+    ],
+    "uuid": "b6ad62c8-24fb-48a8-a937-8f7b19182ee7",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
