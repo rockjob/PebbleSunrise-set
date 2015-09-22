@@ -5,11 +5,12 @@
 
 static char sunrise_buffer[6]; 
 static char sunset_buffer[6];
-static char time_buffer[] = "00:00"; 
-char temp_buffer[32];
-char temp_buffer2[32];
+static char time_buffer[] = "00:00";
+static char date_buffer[16];
+char riseset_buffer[32];
+char tmp[16];
 Window *window;
-TextLayer *text_layer, *text_layer2;
+TextLayer *text_time,*text_date, *text_riseset;
 
 static void update_time() {
   // Get a tm structure
@@ -32,10 +33,46 @@ static void update_time() {
 
   // Display this time on the TextLayer
   //snprintf(temp_buffer, sizeof(temp_buffer), "%s\n\nSunrise: %s \nSunset: %s",time_buffer,sunrise_buffer, sunset_buffer);
-  snprintf(temp_buffer, sizeof(temp_buffer), "Sunrise: %s \nSunset: %s",sunrise_buffer, sunset_buffer);
-  text_layer_set_text(text_layer2, temp_buffer);
-  snprintf(temp_buffer2, sizeof(temp_buffer2), "%s",time_buffer);
-  text_layer_set_text(text_layer, temp_buffer2);
+  snprintf(riseset_buffer, sizeof(riseset_buffer), "Sunrise: %s \nSunset: %s",sunrise_buffer, sunset_buffer);
+  
+  strftime(tmp, sizeof(' '),"%w",tick_time);
+  
+  switch(tmp[0]){
+    case('0'):
+    strcpy(tmp, "Sun ");
+    break;
+    case('1'):
+    strcpy(tmp, "Mon ");
+    break;
+    case('2'):
+    strcpy(tmp, "Tue ");
+    break;
+    case('3'):
+    strcpy(tmp, "Wed ");
+    break;
+    case('4'):
+    strcpy(tmp, "Thu ");
+    break;
+    case('5'):
+    strcpy(tmp, "Fri ");
+    break;
+    case('6'):
+    strcpy(tmp, "Sat ");
+    break;
+  }
+  APP_LOG(APP_LOG_LEVEL_ERROR, "tmp= %s", tmp);
+  strftime(date_buffer, sizeof(date_buffer), "%d %b %Y",tick_time);
+  //strncpy(tmp, date_buffer, sizeof(date_buffer));
+ memcpy(&tmp[4], &date_buffer[0], 11);
+  APP_LOG(APP_LOG_LEVEL_ERROR, "tmp= %s", tmp);
+  
+  
+  text_layer_set_text(text_riseset, riseset_buffer);
+  text_layer_set_text(text_date, tmp);
+  text_layer_set_text(text_time, time_buffer);
+  
+  APP_LOG(APP_LOG_LEVEL_ERROR, "time buffer %s \n date %s \n riseset %s",time_buffer,date_buffer,riseset_buffer);
+  
 }
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
@@ -93,20 +130,25 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
 void handle_init(void) {
 	// Create a window and text layer
 	window = window_create();
-	text_layer = text_layer_create(GRect(0, 12, 144, 84));
-  text_layer2 = text_layer_create(GRect(0, 84, 144, 84));
+	text_time = text_layer_create(GRect(0, 0, 144, 58));
+  text_date = text_layer_create(GRect(0, 58, 144, 20));
+  text_riseset = text_layer_create(GRect(0, 84, 144, 84));
 	
 	// Set the text, font, and text alignment
-	text_layer_set_text(text_layer2, "Waiting for Info");
-	text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
-	text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
+	//text_layer_set_text(text_time, "Waiting for Info");
+	text_layer_set_font(text_time, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
+	text_layer_set_text_alignment(text_time, GTextAlignmentCenter);
   
-  text_layer_set_font(text_layer2, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
-  text_layer_set_text_alignment(text_layer2, GTextAlignmentCenter);
+  text_layer_set_font(text_date, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+	text_layer_set_text_alignment(text_date, GTextAlignmentCenter);
+  
+  text_layer_set_font(text_riseset, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+  text_layer_set_text_alignment(text_riseset, GTextAlignmentCenter);
 	
 	// Add the text layer to the window
-	layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_layer));
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_layer2));
+	layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_time));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_date));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_riseset));
 
 	// Push the window
 	window_stack_push(window, true);
@@ -119,6 +161,7 @@ void handle_init(void) {
   app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
 	// App Logging!
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "Just pushed a window!");
+
   update_time();
 }
 
@@ -128,7 +171,9 @@ void handle_init(void) {
 
 void handle_deinit(void) {
 	// Destroy the text layer
-	text_layer_destroy(text_layer);
+	text_layer_destroy(text_time);
+  text_layer_destroy(text_date);
+  text_layer_destroy(text_riseset);
 	
 	// Destroy the window
 	window_destroy(window);

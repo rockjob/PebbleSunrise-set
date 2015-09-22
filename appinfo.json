@@ -1,7 +1,10 @@
 {
     "appKeys": {
         "KEY_SUNRISE": 0,
-        "KEY_SUNSET": 1
+        "KEY_SUNSET": 1,
+        "KEY_TEMP": 2,
+        "KEY_TEMPMAX": 4,
+        "KEY_TEMPMIN": 3
     },
     "capabilities": [
         ""
