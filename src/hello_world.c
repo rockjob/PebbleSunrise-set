@@ -3,7 +3,7 @@
 #define KEY_SUNRISE 0
 #define KEY_SUNSET 1
 
-static char sunrise_buffer[6]; 
+static char sunrise_buffer[6];
 static char sunset_buffer[6];
 static char time_buffer[] = "00:00";
 static char date_buffer[16];
@@ -17,10 +17,14 @@ static void update_time() {
   time_t temp = time(NULL); 
   struct tm *tick_time = localtime(&temp);
   
-  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Value for compare %c", sunset_buffer[2]);
-  if(sunset_buffer[2] != ':'){
-  app_message_outbox_send();
+  strftime(time_buffer, sizeof("00"), "%M", tick_time);
+  if(((int)time_buffer % 30)== 0){
+    app_message_outbox_send();
   }
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Value for compare %c", sunset_buffer[2]);
+  //if(sunset_buffer[2] != ':'){
+  //app_message_outbox_send();
+  //}
   // Create a long-lived buffer
     // Write the current hours and minutes into the buffer
   if(clock_is_24h_style() == true) {
@@ -60,11 +64,11 @@ static void update_time() {
     strcpy(tmp, "Sat ");
     break;
   }
-  APP_LOG(APP_LOG_LEVEL_ERROR, "tmp= %s", tmp);
+  //APP_LOG(APP_LOG_LEVEL_ERROR, "tmp= %s", tmp);
   strftime(date_buffer, sizeof(date_buffer), "%d %b %Y",tick_time);
   //strncpy(tmp, date_buffer, sizeof(date_buffer));
  memcpy(&tmp[4], &date_buffer[0], 11);
-  APP_LOG(APP_LOG_LEVEL_ERROR, "tmp= %s", tmp);
+  //APP_LOG(APP_LOG_LEVEL_ERROR, "tmp= %s", tmp);
   
   
   text_layer_set_text(text_riseset, riseset_buffer);
@@ -76,7 +80,7 @@ static void update_time() {
 }
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
-APP_LOG(APP_LOG_LEVEL_ERROR, "Inbox Received call!");
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Inbox Received call!");
   Tuple *t = dict_read_first(iterator);
 
   // For all items
@@ -86,8 +90,8 @@ APP_LOG(APP_LOG_LEVEL_ERROR, "Inbox Received call!");
     case KEY_SUNRISE:
       
     snprintf(sunrise_buffer, sizeof(sunrise_buffer), "%s", t->value->cstring);
-      //APP_LOG(APP_LOG_LEVEL_DEBUG, "Sunrise time sent to pebble: %s", sunrise_buffer);
-      break;
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Sunrise time sent to pebble: %s", sunrise_buffer);
+    break;
       case KEY_SUNSET:
       snprintf(sunset_buffer, sizeof(sunset_buffer), "%s", t->value->cstring);
       //APP_LOG(APP_LOG_LEVEL_DEBUG, "Sunset time sent to pebble: %s", sunset_buffer);
@@ -160,8 +164,13 @@ void handle_init(void) {
   
   app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
 	// App Logging!
-	APP_LOG(APP_LOG_LEVEL_DEBUG, "Just pushed a window!");
-
+	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Just pushed a window!");
+  
+  if(persist_exists(KEY_SUNRISE)){
+    persist_read_data(KEY_SUNRISE, sunrise_buffer,  sizeof(sunrise_buffer));
+    persist_read_data(KEY_SUNSET, sunset_buffer,  sizeof(sunset_buffer));
+  }
+  app_message_outbox_send();
   update_time();
 }
 
@@ -171,6 +180,8 @@ void handle_init(void) {
 
 void handle_deinit(void) {
 	// Destroy the text layer
+  persist_write_data(KEY_SUNRISE, sunrise_buffer,  sizeof(sunrise_buffer));
+  persist_write_data(KEY_SUNSET, sunset_buffer,  sizeof(sunset_buffer));  
 	text_layer_destroy(text_time);
   text_layer_destroy(text_date);
   text_layer_destroy(text_riseset);

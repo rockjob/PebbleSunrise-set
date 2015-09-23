@@ -36,9 +36,9 @@ function getweather() {
       
       var unixsunrise = json.sys.sunrise;
       var date = new Date(unixsunrise*1000);
-      var hours = date.getHours();
+      var hours = "0" + date.getHours();
       var minutes = "0" + date.getMinutes();
-      var sunrise = hours + ':' + minutes.substr(-2);
+      var sunrise = hours.substr(-2) + ':' + minutes.substr(-2);
       
       var unixsunset = json.sys.sunset;
       date = new Date(unixsunset*1000);
