@@ -55,9 +55,16 @@ function getweather() {
       var conditions = json.weather[0].main;      
       console.log('Conditions are ' + conditions);
       */
+      var temp = json.main.temp - 272.15;
+      var temp_min = json.main.temp_min - 272.15;
+      var temp_max = json.main.temp_max - 272.15;
       var dictionary = {
       'KEY_SUNRISE': sunrise,
-      'KEY_SUNSET': sunset
+      'KEY_SUNSET': sunset,
+      'KEY_TEMP' : temp,
+      'KEY_TEMPMIN': temp_min,
+      'KEY_TEMPMAX' : temp_max
+        
       };
       //console.log(dictionary);
       Pebble.sendAppMessage(dictionary,

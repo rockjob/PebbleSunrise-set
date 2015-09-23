@@ -2,15 +2,21 @@
 
 #define KEY_SUNRISE 0
 #define KEY_SUNSET 1
+#define KEY_TEMP 2
+#define KEY_TEMPMIN 3
+#define KEY_TEMPMAX 4
 
 static char sunrise_buffer[6];
 static char sunset_buffer[6];
 static char time_buffer[] = "00:00";
 static char date_buffer[16];
+static int tempnow,temp_min,temp_max;
+static char tempnow_buffer[6],temp_min_buffer[12],temp_max_buffer[12];
 char riseset_buffer[32];
 char tmp[16];
+char tmp2[10];
 Window *window;
-TextLayer *text_time,*text_date, *text_riseset;
+TextLayer *text_time,*text_date, *text_riseset, *text_temp,*text_tempmin,*text_tempmax;
 
 static void update_time() {
   // Get a tm structure
@@ -74,6 +80,13 @@ static void update_time() {
   text_layer_set_text(text_riseset, riseset_buffer);
   text_layer_set_text(text_date, tmp);
   text_layer_set_text(text_time, time_buffer);
+  snprintf(tempnow_buffer, sizeof(tempnow_buffer), "%i°C", tempnow);
+  text_layer_set_text(text_temp, tempnow_buffer);
+  snprintf(temp_min_buffer, sizeof(temp_min_buffer), "Min: %i°C", temp_min);
+  text_layer_set_text(text_tempmin, temp_min_buffer);
+  snprintf(temp_max_buffer, sizeof(temp_max_buffer), "Max: %i°C", temp_max);
+  text_layer_set_text(text_tempmax, temp_max_buffer);
+  
   
   APP_LOG(APP_LOG_LEVEL_ERROR, "time buffer %s \n date %s \n riseset %s",time_buffer,date_buffer,riseset_buffer);
   
@@ -100,7 +113,15 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
       //text_layer_set_text(text_layer, temp_buffer);
       
       break;
-      
+      case KEY_TEMP:
+      tempnow = t->value->int32; 
+      break;
+      case KEY_TEMPMIN:
+      temp_min = t->value->int32; 
+      break;
+      case KEY_TEMPMAX:
+      temp_max = t->value->int32; 
+      break;
     default:
       APP_LOG(APP_LOG_LEVEL_ERROR, "Key %d not recognized!", (int)t->key);
       break;
@@ -112,6 +133,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   //snprintf(temp_buffer, sizeof(temp_buffer), "Sunrise: %s \nSunset: %s",sunrise_buffer, sunset_buffer);
   //snprintf(temp_buffer, sizeof(temp_buffer), "%s\n\nSunrise: %s \nSunset: %s",time_buffer,sunrise_buffer, sunset_buffer);
   //text_layer_set_text(text_layer2, temp_buffer);
+  APP_LOG(APP_LOG_LEVEL_ERROR, "temp %i tempmin %i tempmax %i ",tempnow,temp_min,temp_max);
   update_time();
 }
 
@@ -136,7 +158,10 @@ void handle_init(void) {
 	window = window_create();
 	text_time = text_layer_create(GRect(0, 0, 144, 58));
   text_date = text_layer_create(GRect(0, 58, 144, 20));
-  text_riseset = text_layer_create(GRect(0, 84, 144, 84));
+  text_riseset = text_layer_create(GRect(0, 110, 144, 58));
+  text_temp = text_layer_create(GRect(13, 85, 46, 35));
+  text_tempmax = text_layer_create(GRect(71, 80, 60, 20));
+  text_tempmin= text_layer_create(GRect(71, 97, 60, 20));
 	
 	// Set the text, font, and text alignment
 	//text_layer_set_text(text_time, "Waiting for Info");
@@ -149,10 +174,22 @@ void handle_init(void) {
   text_layer_set_font(text_riseset, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   text_layer_set_text_alignment(text_riseset, GTextAlignmentCenter);
 	
+  text_layer_set_text_alignment(text_temp, GTextAlignmentCenter);
+  text_layer_set_font(text_temp, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  
+  text_layer_set_text_alignment(text_tempmin, GTextAlignmentCenter);
+  text_layer_set_font(text_tempmin, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD));
+  
+  text_layer_set_text_alignment(text_tempmax, GTextAlignmentCenter);
+  text_layer_set_font(text_tempmax, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD));
+  
 	// Add the text layer to the window
 	layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_time));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_date));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_riseset));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_temp));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_tempmax));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_tempmin));
 
 	// Push the window
 	window_stack_push(window, true);
