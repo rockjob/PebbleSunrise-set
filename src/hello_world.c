@@ -80,11 +80,8 @@ static void update_time() {
   text_layer_set_text(text_riseset, riseset_buffer);
   text_layer_set_text(text_date, tmp);
   text_layer_set_text(text_time, time_buffer);
-  snprintf(tempnow_buffer, sizeof(tempnow_buffer), "%i°C", tempnow);
   text_layer_set_text(text_temp, tempnow_buffer);
-  snprintf(temp_min_buffer, sizeof(temp_min_buffer), "Min: %i°C", temp_min);
   text_layer_set_text(text_tempmin, temp_min_buffer);
-  snprintf(temp_max_buffer, sizeof(temp_max_buffer), "Max: %i°C", temp_max);
   text_layer_set_text(text_tempmax, temp_max_buffer);
   
   
@@ -133,6 +130,9 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   //snprintf(temp_buffer, sizeof(temp_buffer), "Sunrise: %s \nSunset: %s",sunrise_buffer, sunset_buffer);
   //snprintf(temp_buffer, sizeof(temp_buffer), "%s\n\nSunrise: %s \nSunset: %s",time_buffer,sunrise_buffer, sunset_buffer);
   //text_layer_set_text(text_layer2, temp_buffer);
+  snprintf(tempnow_buffer, sizeof(tempnow_buffer), "%i°C", tempnow);
+  snprintf(temp_min_buffer, sizeof(temp_min_buffer), "Min: %i°C", temp_min);
+  snprintf(temp_max_buffer, sizeof(temp_max_buffer), "Max: %i°C", temp_max);
   APP_LOG(APP_LOG_LEVEL_ERROR, "temp %i tempmin %i tempmax %i ",tempnow,temp_min,temp_max);
   update_time();
 }
@@ -206,6 +206,9 @@ void handle_init(void) {
   if(persist_exists(KEY_SUNRISE)){
     persist_read_data(KEY_SUNRISE, sunrise_buffer,  sizeof(sunrise_buffer));
     persist_read_data(KEY_SUNSET, sunset_buffer,  sizeof(sunset_buffer));
+    persist_read_data(KEY_TEMP, tempnow_buffer,  sizeof(tempnow_buffer));
+    persist_read_data(KEY_TEMPMIN, temp_min_buffer,  sizeof(temp_min_buffer));
+    persist_read_data(KEY_TEMPMAX, temp_max_buffer,  sizeof(temp_max_buffer));
   }
   app_message_outbox_send();
   update_time();
@@ -219,6 +222,9 @@ void handle_deinit(void) {
 	// Destroy the text layer
   persist_write_data(KEY_SUNRISE, sunrise_buffer,  sizeof(sunrise_buffer));
   persist_write_data(KEY_SUNSET, sunset_buffer,  sizeof(sunset_buffer));  
+  persist_write_data(KEY_TEMP, tempnow_buffer,  sizeof(tempnow_buffer));
+  persist_write_data(KEY_TEMPMIN, temp_min_buffer,  sizeof(temp_min_buffer));
+  persist_write_data(KEY_TEMPMAX, temp_max_buffer,  sizeof(temp_max_buffer));
 	text_layer_destroy(text_time);
   text_layer_destroy(text_date);
   text_layer_destroy(text_riseset);
