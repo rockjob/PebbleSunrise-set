@@ -24,7 +24,9 @@ static void update_time() {
   struct tm *tick_time = localtime(&temp);
   
   strftime(time_buffer, sizeof("00"), "%M", tick_time);
-  if(((int)time_buffer % 30)== 0){
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Time mod 30 result is %i", atoi(time_buffer) % 30);
+  if((atoi(time_buffer) % 30)== 0){
+   APP_LOG(APP_LOG_LEVEL_DEBUG, "Weather update sent message sent");
     app_message_outbox_send();
   }
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "Value for compare %c", sunset_buffer[2]);

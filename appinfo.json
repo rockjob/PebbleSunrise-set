@@ -10,13 +10,13 @@
         "configurable"
     ],
     "companyName": "james.b.price@gmail.com",
-    "longName": "James's Watchface",
+    "longName": "SunRise&Set",
     "projectType": "native",
     "resources": {
         "media": []
     },
     "sdkVersion": "3",
-    "shortName": "James's Watchface",
+    "shortName": "SunRise&Set",
     "targetPlatforms": [
         "aplite"
     ],
