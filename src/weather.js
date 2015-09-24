@@ -7,6 +7,17 @@ var dictionary = {
   'KEY_TEMPMAX' : 0
 };
 
+function getLocation(){
+  
+  if(localStorage.getItem('location') !== "") {
+    return localStorage.getItem('location');
+    
+  }else
+    {
+       return "Montreal,Canada";
+    }
+}
+
 function updatedictionary(key1,value){
  console.log("key " + key1 + " value "+value);
   dictionary[key1] = value; 
@@ -49,7 +60,8 @@ var xhrRequest = function (url, type, callback) {
 
 function getweather() {
   // Construct URL
-  var url = 'http://api.openweathermap.org/data/2.5/weather?q=Montreal,Canada';
+  
+  var url = 'http://api.openweathermap.org/data/2.5/weather?q=' + getLocation();
 
   // Send request to OpenWeatherMap
   xhrRequest(url, 'GET', 
@@ -77,7 +89,7 @@ function getweather() {
                updatedictionary('KEY_SUNRISE', sunrise);
                updatedictionary('KEY_SUNSET', sunset);
                updatedictionary('KEY_TEMP', temp);
-               url = 'http://api.openweathermap.org/data/2.5/forecast/daily?q=montreal,canada';
+               url = 'http://api.openweathermap.org/data/2.5/forecast/daily?q=' + getLocation();
                xhrRequest(url, 'GET', 
                           function(responseText) {
                             //console.log(" Dictionary 2 read begins \n");
@@ -98,3 +110,18 @@ function getweather() {
              }//function inside xhrrequest ends      
             ); //xhrRequest end
   }
+
+Pebble.addEventListener('showConfiguration', function(e) {
+  // Show config page
+  Pebble.openURL('http://rockjob.tripod.com/config.html');
+});
+
+Pebble.addEventListener('webviewclosed', function(e) {
+  console.log('Configuration window returned: ' + decodeURIComponent(e.response));
+     var json = JSON.parse(decodeURIComponent(e.response));
+   //console.log(json);
+  localStorage.setItem('location',json.location);
+  getweather();
+  
+  
+});

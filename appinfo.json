@@ -7,7 +7,7 @@
         "KEY_TEMPMIN": 3
     },
     "capabilities": [
-        ""
+        "configurable"
     ],
     "companyName": "james.b.price@gmail.com",
     "longName": "James's Watchface",
