@@ -85,7 +85,7 @@ static void update_time() {
   text_layer_set_text(text_tempmax, temp_max_buffer);
   
   
-  APP_LOG(APP_LOG_LEVEL_ERROR, "time buffer %s \n date %s \n riseset %s",time_buffer,date_buffer,riseset_buffer);
+//  APP_LOG(APP_LOG_LEVEL_ERROR, "time buffer %s \n date %s \n riseset %s",time_buffer,date_buffer,riseset_buffer);
   
 }
 
@@ -99,11 +99,11 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     switch(t->key) {
     case KEY_SUNRISE:
       
-    snprintf(sunrise_buffer, sizeof(sunrise_buffer), "%s", t->value->cstring);
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Sunrise time sent to pebble: %s", sunrise_buffer);
+      snprintf(sunrise_buffer, sizeof(sunrise_buffer), "%s", t->value->cstring);
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "Sunrise time sent to pebble: %s", sunrise_buffer);
     break;
       case KEY_SUNSET:
-      snprintf(sunset_buffer, sizeof(sunset_buffer), "%s", t->value->cstring);
+       snprintf(sunset_buffer, sizeof(sunset_buffer), "%s", t->value->cstring);
       //APP_LOG(APP_LOG_LEVEL_DEBUG, "Sunset time sent to pebble: %s", sunset_buffer);
       //Need to move the below to a mainloop
       //snprintf(temp_buffer, sizeof(temp_buffer), "%s\n\nSunrise: %s \nSunset: %s",time_buffer,sunrise_buffer, sunset_buffer);
@@ -133,7 +133,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   snprintf(tempnow_buffer, sizeof(tempnow_buffer), "%i°C", tempnow);
   snprintf(temp_min_buffer, sizeof(temp_min_buffer), "Min: %i°C", temp_min);
   snprintf(temp_max_buffer, sizeof(temp_max_buffer), "Max: %i°C", temp_max);
-  APP_LOG(APP_LOG_LEVEL_ERROR, "temp %i tempmin %i tempmax %i ",tempnow,temp_min,temp_max);
+  //APP_LOG(APP_LOG_LEVEL_ERROR, "temp %i tempmin %i tempmax %i ",tempnow,temp_min,temp_max);
   update_time();
 }
 
@@ -146,7 +146,7 @@ static void inbox_dropped_callback(AppMessageResult reason, void *context) {
 }
 
 static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
-  APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
+//  APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
 }
 
 static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
@@ -225,7 +225,10 @@ void handle_deinit(void) {
   persist_write_data(KEY_TEMP, tempnow_buffer,  sizeof(tempnow_buffer));
   persist_write_data(KEY_TEMPMIN, temp_min_buffer,  sizeof(temp_min_buffer));
   persist_write_data(KEY_TEMPMAX, temp_max_buffer,  sizeof(temp_max_buffer));
-	text_layer_destroy(text_time);
+	text_layer_destroy(text_temp);
+  text_layer_destroy(text_tempmax);
+  text_layer_destroy(text_tempmin);
+  text_layer_destroy(text_time);
   text_layer_destroy(text_date);
   text_layer_destroy(text_riseset);
 	
