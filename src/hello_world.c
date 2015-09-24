@@ -159,7 +159,7 @@ void handle_init(void) {
 	text_time = text_layer_create(GRect(0, 0, 144, 58));
   text_date = text_layer_create(GRect(0, 58, 144, 20));
   text_riseset = text_layer_create(GRect(0, 110, 144, 58));
-  text_temp = text_layer_create(GRect(13, 85, 46, 35));
+  text_temp = text_layer_create(GRect(13, 78, 46, 35));
   text_tempmax = text_layer_create(GRect(71, 80, 60, 20));
   text_tempmin= text_layer_create(GRect(71, 97, 60, 20));
 	
@@ -175,7 +175,7 @@ void handle_init(void) {
   text_layer_set_text_alignment(text_riseset, GTextAlignmentCenter);
 	
   text_layer_set_text_alignment(text_temp, GTextAlignmentCenter);
-  text_layer_set_font(text_temp, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  text_layer_set_font(text_temp, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   
   text_layer_set_text_alignment(text_tempmin, GTextAlignmentCenter);
   text_layer_set_font(text_tempmin, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD));
