@@ -9,7 +9,7 @@ var dictionary = {
 
 function getLocation(){
   
-  if(localStorage.getItem('location') !== "") {
+  if(localStorage.getItem('location') !== null) {
     return localStorage.getItem('location');
     
   }else
@@ -60,7 +60,6 @@ var xhrRequest = function (url, type, callback) {
 
 function getweather() {
   // Construct URL
-  
   var url = 'http://api.openweathermap.org/data/2.5/weather?q=' + getLocation();
 
   // Send request to OpenWeatherMap

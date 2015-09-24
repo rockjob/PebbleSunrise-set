@@ -18,6 +18,15 @@ char tmp2[10];
 Window *window;
 TextLayer *text_time,*text_date, *text_riseset, *text_temp,*text_tempmin,*text_tempmax;
 
+static void update_ui(){
+  text_layer_set_text(text_riseset, riseset_buffer);
+  text_layer_set_text(text_date, tmp);
+  text_layer_set_text(text_time, time_buffer);
+  text_layer_set_text(text_temp, tempnow_buffer);
+  text_layer_set_text(text_tempmin, temp_min_buffer);
+  text_layer_set_text(text_tempmax, temp_max_buffer);
+}
+
 static void update_time() {
   // Get a tm structure
   time_t temp = time(NULL); 
@@ -79,17 +88,14 @@ static void update_time() {
   //APP_LOG(APP_LOG_LEVEL_ERROR, "tmp= %s", tmp);
   
   
-  text_layer_set_text(text_riseset, riseset_buffer);
-  text_layer_set_text(text_date, tmp);
-  text_layer_set_text(text_time, time_buffer);
-  text_layer_set_text(text_temp, tempnow_buffer);
-  text_layer_set_text(text_tempmin, temp_min_buffer);
-  text_layer_set_text(text_tempmax, temp_max_buffer);
+update_ui();
   
   
 //  APP_LOG(APP_LOG_LEVEL_ERROR, "time buffer %s \n date %s \n riseset %s",time_buffer,date_buffer,riseset_buffer);
   
 }
+
+
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   APP_LOG(APP_LOG_LEVEL_ERROR, "Inbox Received call!");
@@ -136,7 +142,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   snprintf(temp_min_buffer, sizeof(temp_min_buffer), "Min: %i°C", temp_min);
   snprintf(temp_max_buffer, sizeof(temp_max_buffer), "Max: %i°C", temp_max);
   //APP_LOG(APP_LOG_LEVEL_ERROR, "temp %i tempmin %i tempmax %i ",tempnow,temp_min,temp_max);
-  update_time();
+  update_ui();
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
