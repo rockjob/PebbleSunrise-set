@@ -49,10 +49,19 @@ Pebble.addEventListener('appmessage',
                           getweather();
                         }                     
                        );
+
+
+
 var xhrRequest = function (url, type, callback) {
   var xhr = new XMLHttpRequest();
   xhr.onload = function () {
     callback(this.responseText);
+  };
+  xhr.onreadystatechange = function(){
+    if( xhr.readyState == 4 && xhr.status != 200){
+      setTimeout(function(){xhrRequest(url,type,callback);}, 60000);
+      console.log("URL CALL FAILED: " + url);
+    }
   };
   xhr.open(type, url);
   xhr.send();
@@ -81,7 +90,8 @@ function getweather() {
                var sunset = hours + ':' + minutes.substr(-2);
                //console.log('Sunrise is ' + sunrise);
 
-               var temp = json.main.temp - 272.15;
+               var temp = Math.round(json.main.temp - 272.15);
+               
                //var temp_min = json.main.temp_min - 272.15;
                //var temp_max = json.main.temp_max - 272.15;
 
@@ -94,8 +104,8 @@ function getweather() {
                             //console.log(" Dictionary 2 read begins \n");
                             //console.log( dictionary.KEY_TEMPMIN + " " + dictionary.KEY_TEMPMAX + " " + dictionary.KEY_SUNRISE + " " + dictionary.KEY_SUNSET + " " + dictionary.KEY_TEMP);
                             var json = JSON.parse(responseText);
-                            var temp_min = json.list[0].temp.min - 272.15;
-                            var temp_max = json.list[0].temp.max - 272.15;
+                            var temp_min = Math.round(json.list[0].temp.min - 272.15);
+                            var temp_max = Math.round(json.list[0].temp.max - 272.15);
                             //console.log("temp_min " + temp_min +"\ntemp_max " +temp_max);
                             //console.log("temp_max" + temp_max);
                             updatedictionary('KEY_TEMPMIN', temp_min);
