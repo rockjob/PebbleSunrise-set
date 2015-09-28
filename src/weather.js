@@ -52,15 +52,16 @@ Pebble.addEventListener('appmessage',
 
 
 
-var xhrRequest = function (url, type, callback) {
+var xhrRequest = function (url, type, callback, count) {
   var xhr = new XMLHttpRequest();
   xhr.onload = function () {
     callback(this.responseText);
   };
   xhr.onreadystatechange = function(){
-    if( xhr.readyState == 4 && xhr.status != 200){
-      setTimeout(function(){xhrRequest(url,type,callback);}, 60000);
-      console.log("URL CALL FAILED: " + url);
+    if( xhr.readyState == 4 && xhr.status != 200 & count < 6){
+      setTimeout(function(){xhrRequest(url,type,callback,count +1);}, 120000);
+      //console.log("URL CALL FAILED: " + url);
+      //console.log("Attempt: " + count);
     }
   };
   xhr.open(type, url);
@@ -92,9 +93,6 @@ function getweather() {
 
                var temp = Math.round(json.main.temp - 272.15);
                
-               //var temp_min = json.main.temp_min - 272.15;
-               //var temp_max = json.main.temp_max - 272.15;
-
                updatedictionary('KEY_SUNRISE', sunrise);
                updatedictionary('KEY_SUNSET', sunset);
                updatedictionary('KEY_TEMP', temp);
@@ -112,11 +110,11 @@ function getweather() {
                             updatedictionary('KEY_TEMPMAX', temp_max);
                             //console.log("reached sending");
                             senddictionary();
-                          }     
+                          },1     
                          );
           
 
-             }//function inside xhrrequest ends      
+             },1//function inside xhrrequest ends      
             ); //xhrRequest end
   }
 

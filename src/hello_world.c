@@ -33,7 +33,7 @@ static void update_time() {
   struct tm *tick_time = localtime(&temp);
   
   strftime(time_buffer, sizeof("00"), "%M", tick_time);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Time mod 30 result is %i", atoi(time_buffer) % 30);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Time mod 30 result is %i", atoi(time_buffer) % 30);
   if((atoi(time_buffer) % 30)== 0){
    APP_LOG(APP_LOG_LEVEL_DEBUG, "Weather update sent message sent");
     app_message_outbox_send();
@@ -142,7 +142,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   snprintf(temp_min_buffer, sizeof(temp_min_buffer), "Min: %i°C", temp_min);
   snprintf(temp_max_buffer, sizeof(temp_max_buffer), "Max: %i°C", temp_max);
   //APP_LOG(APP_LOG_LEVEL_ERROR, "temp %i tempmin %i tempmax %i ",tempnow,temp_min,temp_max);
-  update_ui();
+  update_time();
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
