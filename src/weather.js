@@ -70,7 +70,7 @@ var xhrRequest = function (url, type, callback, count) {
 
 function getweather() {
   // Construct URL
-  var url = 'http://api.openweathermap.org/data/2.5/weather?q=' + getLocation();
+  var url = 'http://api.openweathermap.org/data/2.5/weather?q=' + getLocation() + "&APPID=b585355033bf54a340e1daacc9ea2c09";
 
   // Send request to OpenWeatherMap
   xhrRequest(url, 'GET', 
@@ -96,7 +96,7 @@ function getweather() {
                updatedictionary('KEY_SUNRISE', sunrise);
                updatedictionary('KEY_SUNSET', sunset);
                updatedictionary('KEY_TEMP', temp);
-               url = 'http://api.openweathermap.org/data/2.5/forecast/daily?q=' + getLocation();
+               url = 'http://api.openweathermap.org/data/2.5/forecast/daily?q=' + getLocation() + "&APPID=b585355033bf54a340e1daacc9ea2c09";
                xhrRequest(url, 'GET', 
                           function(responseText) {
                             //console.log(" Dictionary 2 read begins \n");
