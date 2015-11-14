@@ -7,25 +7,50 @@
   <body>
   
     <h1 class='title'>WatchFace Configuration</h1>
-
-    
-          Enter your location below in the format "city/country" (eg Montreal,Canada):<br>
-   
-         <input id='location_text' type='text'>
+		<b>Celsius or Fahrenheit?</b><P>
+		<input type="radio" id="temp_C" name="temp_CF" value="C" checked>Celsius
+		<br><input type="radio" id="temp_F" name="temp_CF" value="F">Fahrenheit
+		<P>
+		
+	
+		<form>
+		<b>User GPS to determine location?</b><P>
+		<input type="radio" id="gps_yes" name="gps" value="yes" checked>Use GPS
+		<br><input type="radio" id="gps_no" name="gps" value="no">Use manual location (enter below)
+		</form>
+          Enter your manual location below in the format "city,country" (eg Montreal,Canada):<br>
+		
+         <input id='location_text' type='text' value="Montreal,Canada">
         
 
         <input id='submit_button' type='button' value='SUBMIT'>
   <script>
   function getConfigData() {
     var location_text = document.getElementById('location_text');
+	var gps;
+	var temp_CF;
+	if(document.getElementById('gps_yes').checked){
+	gps = "gps_yes";
+	} else {
+		gps = "gps_no";
+	}
+	
+	if(document.getElementById('temp_C').checked){
+	temp_CF = "C";
+	} else {
+		temp_CF = "F";
+	}
      
     var options = {
-      'location': location_text.value
+      'location': location_text.value,
+	  'gps': gps,
+	  'temp_CF' : temp_CF
     };
 
     // Save for next launch
     localStorage['location'] = options['location'];
-    
+    localStorage['gps'] = options['gps'];
+	localStorage['temp_CF'] = options['temp_CF'];
     console.log('Got options: ' + JSON.stringify(options));
     return options;
   }
@@ -57,12 +82,24 @@
 
   (function() {
     var location_text = document.getElementById('location_text');
-    
+   
 
     // Load any previously saved configuration, if available
     if(localStorage['location']) {
       
       location_text.value = localStorage['location'];
+	  if(localStorage['gps'] == "gps_yes"){
+		document.getElementById('gps_yes').checked = true;
+	  } else {
+		document.getElementById('gps_no').checked = true;
+	  }
+	  
+	  if(localStorage['temp_CF'] == "F"){
+		document.getElementById('temp_F').checked = true;
+	  } else {
+		document.getElementById('temp_C').checked = true;
+	  }
+	  
     }
   })();
   </script>
