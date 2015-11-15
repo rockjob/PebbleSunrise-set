@@ -5,6 +5,7 @@
 #define KEY_TEMP 2
 #define KEY_TEMPMIN 3
 #define KEY_TEMPMAX 4
+#define KEY_TEMP_CF 5
 
 static char sunrise_buffer[6];
 static char sunset_buffer[6];
@@ -12,7 +13,7 @@ static char time_buffer[] = "00:00";
 static char date_buffer[16];
 static int tempnow,temp_min,temp_max;
 static char tempnow_buffer[6],temp_min_buffer[12],temp_max_buffer[12];
-char riseset_buffer[32];
+char riseset_buffer[32],temp_cf;
 char tmp[16];
 char tmp2[10];
 Window *window;
@@ -136,6 +137,10 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
       case KEY_TEMPMAX:
       temp_max = t->value->int32; 
       break;
+      case KEY_TEMP_CF:
+      temp_cf = t->value->uint32;
+      APP_LOG(APP_LOG_LEVEL_ERROR, "tempcf value %d", (int)t->value->cstring);
+      break;
     default:
       APP_LOG(APP_LOG_LEVEL_ERROR, "Key %d not recognized!", (int)t->key);
       break;
@@ -147,9 +152,9 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   //snprintf(temp_buffer, sizeof(temp_buffer), "Sunrise: %s \nSunset: %s",sunrise_buffer, sunset_buffer);
   //snprintf(temp_buffer, sizeof(temp_buffer), "%s\n\nSunrise: %s \nSunset: %s",time_buffer,sunrise_buffer, sunset_buffer);
   //text_layer_set_text(text_layer2, temp_buffer);
-  snprintf(tempnow_buffer, sizeof(tempnow_buffer), "%i°C", tempnow);
-  snprintf(temp_min_buffer, sizeof(temp_min_buffer), "Min: %i°C", temp_min);
-  snprintf(temp_max_buffer, sizeof(temp_max_buffer), "Max: %i°C", temp_max);
+  snprintf(tempnow_buffer, sizeof(tempnow_buffer), "%i°%c", tempnow, temp_cf);
+  snprintf(temp_min_buffer, sizeof(temp_min_buffer), "Min: %i°%c", temp_min, temp_cf);
+  snprintf(temp_max_buffer, sizeof(temp_max_buffer), "Max: %i°%c", temp_max, temp_cf);
   //APP_LOG(APP_LOG_LEVEL_ERROR, "temp %i tempmin %i tempmax %i ",tempnow,temp_min,temp_max);
   update_time();
 }
@@ -177,8 +182,8 @@ void handle_init(void) {
   text_date = text_layer_create(GRect(0, 58, 144, 20));
   text_riseset = text_layer_create(GRect(0, 110, 144, 58));
   text_temp = text_layer_create(GRect(13, 78, 46, 35));
-  text_tempmax = text_layer_create(GRect(71, 80, 60, 20));
-  text_tempmin= text_layer_create(GRect(71, 97, 60, 20));
+  text_tempmax = text_layer_create(GRect(71, 80, 65, 20));
+  text_tempmin= text_layer_create(GRect(71, 97, 65, 20));
   text_batt = text_layer_create(GRect(0, 56, 144, 3));
   
 	

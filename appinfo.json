@@ -4,7 +4,8 @@
         "KEY_SUNSET": 1,
         "KEY_TEMP": 2,
         "KEY_TEMPMAX": 4,
-        "KEY_TEMPMIN": 3
+        "KEY_TEMPMIN": 3,
+        "KEY_TEMP_CF": 5
     },
     "capabilities": [
         "configurable"
@@ -21,7 +22,7 @@
         "aplite"
     ],
     "uuid": "b6ad62c8-24fb-48a8-a937-8f7b19182ee7",
-    "versionLabel": "1.03",
+    "versionLabel": "1.04",
     "watchapp": {
         "watchface": true
     }

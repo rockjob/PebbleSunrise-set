@@ -4,7 +4,8 @@ var dictionary = {
   'KEY_SUNSET' : 0,
   'KEY_TEMP' : 0,
   'KEY_TEMPMIN' : 0,
-  'KEY_TEMPMAX' : 0
+  'KEY_TEMPMAX' : 0,
+  'KEY_TEMP_CF' : 0
 };
 
 var lon,lat;
@@ -25,6 +26,11 @@ function locationError(err) {
 }
 
 function getLocation(){
+  if(localStorage.getItem('temp_CF') === null){
+    updatedictionary('KEY_TEMP_CF', "C");
+    localStorage.setItem('temp_CF',"C");    
+  }
+  
   
   if(localStorage.getItem('gps') !== null) { //If null config page hasn't been set
     if(localStorage.getItem('gps') == "gps_no"){ //Don't use GPS
@@ -32,13 +38,11 @@ function getLocation(){
      }else { //Use GPS!!
        navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
        if(lon !== null){ //GPS data avaliable
-         
          return "lat=" + lat + "&lon="  + lon;
        } else { //No GPS data to use, using location instead
          return "q=" + localStorage.getItem('location');
        }
-       
-       
+              
      }
     
     
@@ -121,9 +125,12 @@ function getweather() {
                minutes = "0" + date.getMinutes();
                var sunset = hours + ':' + minutes.substr(-2);
                //console.log('Sunrise is ' + sunrise);
-
-               var temp = Math.round(json.main.temp - 272.15);
-               
+               var temp;
+              if(localStorage.getItem('temp_CF') !== "F"){ //C
+               temp = Math.round(json.main.temp - 273.15);
+              } else { //F
+               temp = Math.round((json.main.temp - 273.15)*1.8+32);
+              }
                updatedictionary('KEY_SUNRISE', sunrise);
                updatedictionary('KEY_SUNSET', sunset);
                updatedictionary('KEY_TEMP', temp);
@@ -133,12 +140,21 @@ function getweather() {
                             //console.log(" Dictionary 2 read begins \n");
                             //console.log( dictionary.KEY_TEMPMIN + " " + dictionary.KEY_TEMPMAX + " " + dictionary.KEY_SUNRISE + " " + dictionary.KEY_SUNSET + " " + dictionary.KEY_TEMP);
                             var json = JSON.parse(responseText);
-                            var temp_min = Math.round(json.list[0].temp.min - 272.15);
-                            var temp_max = Math.round(json.list[0].temp.max - 272.15);
+                            var temp_min,temp_max;
+                            if(localStorage.getItem('temp_CF') !== "F"){ //C
+                              
+                            temp_min = Math.round(json.list[0].temp.min - 273.15);
+                            temp_max = Math.round(json.list[0].temp.max - 273.15);
+                            } else { //F
+                              console.log("USING F for temp");
+                            temp_min = Math.round((json.list[0].temp.min - 273.15)*1.8 +32);
+                            temp_max = Math.round((json.list[0].temp.max - 273.15)*1.8 +32);                              
+                            }
                             //console.log("temp_min " + temp_min +"\ntemp_max " +temp_max);
                             //console.log("temp_max" + temp_max);
                             updatedictionary('KEY_TEMPMIN', temp_min);
                             updatedictionary('KEY_TEMPMAX', temp_max);
+                            updatedictionary('KEY_TEMP_CF', localStorage.getItem('temp_CF'));
                             //console.log("reached sending");
                             senddictionary();
                           },1     
