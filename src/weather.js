@@ -7,14 +7,45 @@ var dictionary = {
   'KEY_TEMPMAX' : 0
 };
 
+var lon,lat;
+var locationOptions = {
+  enableHighAccuracy: true, 
+  maximumAge: 10000, 
+  timeout: 10000
+};
+
+function locationSuccess(pos) {
+  console.log('lat= ' + pos.coords.latitude + ' lon= ' + pos.coords.longitude);
+  lat = pos.coords.latitude;
+  lon = pos.coords.longitude;
+}
+
+function locationError(err) {
+  console.log('location error (' + err.code + '): ' + err.message);
+}
+
 function getLocation(){
   
-  if(localStorage.getItem('location') !== null) {
-    return localStorage.getItem('location');
+  if(localStorage.getItem('gps') !== null) { //If null config page hasn't been set
+    if(localStorage.getItem('gps') == "gps_no"){ //Don't use GPS
+      return "q=" + localStorage.getItem('location');   
+     }else { //Use GPS!!
+       navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+       if(lon !== null){ //GPS data avaliable
+         
+         return "lat=" + lat + "&lon="  + lon;
+       } else { //No GPS data to use, using location instead
+         return "q=" + localStorage.getItem('location');
+       }
+       
+       
+     }
+    
+    
     
   }else
     {
-       return "Montreal,Canada";
+       return "q=Montreal,Canada";
     }
 }
 
@@ -70,7 +101,7 @@ var xhrRequest = function (url, type, callback, count) {
 
 function getweather() {
   // Construct URL
-  var url = 'http://api.openweathermap.org/data/2.5/weather?q=' + getLocation() + "&APPID=b585355033bf54a340e1daacc9ea2c09";
+  var url = 'http://api.openweathermap.org/data/2.5/weather?' + getLocation() + "&APPID=b585355033bf54a340e1daacc9ea2c09";
 
   // Send request to OpenWeatherMap
   xhrRequest(url, 'GET', 
@@ -96,7 +127,7 @@ function getweather() {
                updatedictionary('KEY_SUNRISE', sunrise);
                updatedictionary('KEY_SUNSET', sunset);
                updatedictionary('KEY_TEMP', temp);
-               url = 'http://api.openweathermap.org/data/2.5/forecast/daily?q=' + getLocation() + "&APPID=b585355033bf54a340e1daacc9ea2c09";
+               url = 'http://api.openweathermap.org/data/2.5/forecast/daily?' + getLocation() + "&APPID=b585355033bf54a340e1daacc9ea2c09";
                xhrRequest(url, 'GET', 
                           function(responseText) {
                             //console.log(" Dictionary 2 read begins \n");
@@ -128,6 +159,8 @@ Pebble.addEventListener('webviewclosed', function(e) {
      var json = JSON.parse(decodeURIComponent(e.response));
    //console.log(json);
   localStorage.setItem('location',json.location);
+  localStorage.setItem('gps',json.gps);
+  localStorage.setItem('temp_CF',json.temp_CF);
   getweather();
   
   

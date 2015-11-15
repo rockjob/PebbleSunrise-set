@@ -16,7 +16,14 @@ char riseset_buffer[32];
 char tmp[16];
 char tmp2[10];
 Window *window;
-TextLayer *text_time,*text_date, *text_riseset, *text_temp,*text_tempmin,*text_tempmax;
+TextLayer *text_time,*text_date, *text_riseset, *text_temp,*text_tempmin,*text_tempmax,*text_batt;
+
+static void update_batt(BatteryChargeState current){
+int chargelevel  = current.charge_percent;
+
+  text_layer_set_size(text_batt, GSize((144 * chargelevel)/100, 3));
+  
+}
 
 static void update_ui(){
   text_layer_set_text(text_riseset, riseset_buffer);
@@ -25,7 +32,9 @@ static void update_ui(){
   text_layer_set_text(text_temp, tempnow_buffer);
   text_layer_set_text(text_tempmin, temp_min_buffer);
   text_layer_set_text(text_tempmax, temp_max_buffer);
+  update_batt(battery_state_service_peek());
 }
+
 
 static void update_time() {
   // Get a tm structure
@@ -170,6 +179,8 @@ void handle_init(void) {
   text_temp = text_layer_create(GRect(13, 78, 46, 35));
   text_tempmax = text_layer_create(GRect(71, 80, 60, 20));
   text_tempmin= text_layer_create(GRect(71, 97, 60, 20));
+  text_batt = text_layer_create(GRect(0, 56, 144, 3));
+  
 	
 	// Set the text, font, and text alignment
 	//text_layer_set_text(text_time, "Waiting for Info");
@@ -191,6 +202,8 @@ void handle_init(void) {
   text_layer_set_text_alignment(text_tempmax, GTextAlignmentCenter);
   text_layer_set_font(text_tempmax, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD));
   
+  text_layer_set_background_color(text_batt, GColorBlack);
+  
 	// Add the text layer to the window
 	layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_time));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_date));
@@ -198,6 +211,7 @@ void handle_init(void) {
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_temp));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_tempmax));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_tempmin));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_batt));
 
 	// Push the window
 	window_stack_push(window, true);
@@ -239,6 +253,7 @@ void handle_deinit(void) {
   text_layer_destroy(text_time);
   text_layer_destroy(text_date);
   text_layer_destroy(text_riseset);
+  text_layer_destroy(text_batt);
 	
 	// Destroy the window
 	window_destroy(window);
