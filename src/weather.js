@@ -37,7 +37,7 @@ function getLocation(){
       return "q=" + localStorage.getItem('location');   
      }else { //Use GPS!!
        navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
-       if(lon !== null){ //GPS data avaliable
+       if(lon !== undefined){ //GPS data avaliable
          return "lat=" + lat + "&lon="  + lon;
        } else { //No GPS data to use, using location instead
          return "q=" + localStorage.getItem('location');
@@ -112,7 +112,7 @@ function getweather() {
              function(responseText) {
                // responseText contains a JSON object with weather info
                var json = JSON.parse(responseText);
-
+              
                var unixsunrise = json.sys.sunrise;
                var date = new Date(unixsunrise*1000);
                var hours = "0" + date.getHours();
