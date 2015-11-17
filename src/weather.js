@@ -60,14 +60,17 @@ function senddictionary(){
 Pebble.addEventListener('ready', 
                         function(e) {
                           console.log('PebbleKit JS ready!');
+                          console.log('gps = '+ localStorage.getItem('gps'));
+                          console.log('location = '+ localStorage.getItem('location'));
+                          console.log('temp_CF = '+ localStorage.getItem('temp_CF'));
                           if(localStorage.getItem('gps') == "gps_yes") navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
                           //Setup variables if any are empty
-                          if(localStorage.getItem('gps') === (null || undefined)){
+                          if(localStorage.getItem('gps') === null){
                             navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
                             localStorage.setItem('gps','gps_yes');
                           }
-                          if(localStorage.getItem('location') === (null || undefined))  localStorage.setItem('location','Montreal,Canada');
-                          if(localStorage.getItem('temp_CF') === (null || undefined)) localStorage.setItem('temp_CF',"C");                           
+                          if(localStorage.getItem('location') === null)  localStorage.setItem('location','Montreal,Canada');
+                          if(localStorage.getItem('temp_CF') === null) localStorage.setItem('temp_CF',"C");                           
                           getweather();
                         }
                        );
@@ -102,13 +105,13 @@ var xhrRequest = function (url, type, callback, count) {
 function getweather() {
   // Construct URL
   var url = 'http://api.openweathermap.org/data/2.5/weather?' + getLocation() + "&APPID=b585355033bf54a340e1daacc9ea2c09";
-
+console.log("Get weather run!");
   // Send request to OpenWeatherMap
   xhrRequest(url, 'GET', 
              function(responseText) {
                // responseText contains a JSON object with weather info
                var json = JSON.parse(responseText);
-              
+               console.log("location: " + url + "Response: " + responseText);
                var unixsunrise = json.sys.sunrise;
                var date = new Date(unixsunrise*1000);
                var hours = "0" + date.getHours();
