@@ -65,12 +65,13 @@ Pebble.addEventListener('ready',
                           console.log('temp_CF = '+ localStorage.getItem('temp_CF'));
                           if(localStorage.getItem('gps') == "gps_yes") navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
                           //Setup variables if any are empty
-                          if(localStorage.getItem('gps') === null){
+                          if(!localStorage.getItem('gps')){
+                            console.log('GPS value null or undefined');
                             navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
                             localStorage.setItem('gps','gps_yes');
                           }
-                          if(localStorage.getItem('location') === null)  localStorage.setItem('location','Montreal,Canada');
-                          if(localStorage.getItem('temp_CF') === null) localStorage.setItem('temp_CF',"C");                           
+                          if(!localStorage.getItem('location'))  localStorage.setItem('location','Montreal,Canada');
+                          if(!localStorage.getItem('temp_CF')) localStorage.setItem('temp_CF',"C");                           
                           getweather();
                         }
                        );
