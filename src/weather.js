@@ -26,32 +26,19 @@ function locationError(err) {
 }
 
 function getLocation(){
-  if(localStorage.getItem('temp_CF') === null){
-    updatedictionary('KEY_TEMP_CF', "C");
-    localStorage.setItem('temp_CF',"C");    
-  }
-  
-  
-  if(localStorage.getItem('gps') !== null) { //If null config page hasn't been set
-    if(localStorage.getItem('gps') == "gps_no"){ //Don't use GPS
-      return "q=" + localStorage.getItem('location');   
-     }else { //Use GPS!!
-       navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
-       if(lon !== undefined){ //GPS data avaliable
+ if(localStorage.getItem('gps') == "gps_yes") { //If null, undefined or no
+    //Call GPS
+    navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+    if(lon !== undefined){ //GPS data avaliable
          return "lat=" + lat + "&lon="  + lon;
        } else { //No GPS data to use, using location instead
          return "q=" + localStorage.getItem('location');
        }
-              
-     }
-    
-    
-    
-  }else
-    {
-       return "q=Montreal,Canada";
-    }
-}
+  }
+  if(localStorage.getItem('gps') == "gps_no"){ //Don't use GPS
+    return "q=" + localStorage.getItem('location');   
+  }
+ }
 
 function updatedictionary(key1,value){
  console.log("key " + key1 + " value "+value);
@@ -73,6 +60,14 @@ function senddictionary(){
 Pebble.addEventListener('ready', 
                         function(e) {
                           console.log('PebbleKit JS ready!');
+                          if(localStorage.getItem('gps') == "gps_yes") navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+                          //Setup variables if any are empty
+                          if(localStorage.getItem('gps') === (null || undefined)){
+                            navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+                            localStorage.setItem('gps','gps_yes');
+                          }
+                          if(localStorage.getItem('location') === (null || undefined))  localStorage.setItem('location','Montreal,Canada');
+                          if(localStorage.getItem('temp_CF') === (null || undefined)) localStorage.setItem('temp_CF',"C");                           
                           getweather();
                         }
                        );
@@ -81,6 +76,7 @@ Pebble.addEventListener('ready',
 Pebble.addEventListener('appmessage',
                         function(e) {
                           console.log('AppMessage received!');
+                          //console.log(dictionary);
                           getweather();
                         }                     
                        );
@@ -177,6 +173,7 @@ Pebble.addEventListener('webviewclosed', function(e) {
   localStorage.setItem('location',json.location);
   localStorage.setItem('gps',json.gps);
   localStorage.setItem('temp_CF',json.temp_CF);
+  if(json.gps == "gps_yes") navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
   getweather();
   
   
