@@ -13,6 +13,7 @@ static char time_buffer[] = "00:00";
 static char date_buffer[16];
 static int tempnow,temp_min,temp_max;
 static char tempnow_buffer[7],temp_min_buffer[12],temp_max_buffer[12];
+DictionaryIterator *test_dict;
 char riseset_buffer[32],temp_cf;
 char tmp[16];
 char tmp2[10];
@@ -156,9 +157,12 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   strftime(time_buffer, sizeof("00"), "%M", tick_time);
-  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Time mod 30 result is %i", atoi(time_buffer) % 30);
+  //snprintf(time_buffer, sizeof("00"), "00");
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Time mod 30 result is %i", atoi(time_buffer) % 30);
+  
   if((atoi(time_buffer) % 30)== 0){
    APP_LOG(APP_LOG_LEVEL_DEBUG, "Weather update sent message sent");
+    app_message_outbox_begin(&test_dict);
     app_message_outbox_send();
   }
   update_time();
@@ -169,7 +173,7 @@ static void inbox_dropped_callback(AppMessageResult reason, void *context) {
 }
 
 static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
-//  APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
 }
 
 static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {

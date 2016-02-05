@@ -11,6 +11,7 @@
         "configurable"
     ],
     "companyName": "james.b.price@gmail.com",
+    "enableMultiJS": false,
     "longName": "SunRise&Set",
     "projectType": "native",
     "resources": {
@@ -22,7 +23,7 @@
         "aplite"
     ],
     "uuid": "b6ad62c8-24fb-48a8-a937-8f7b19182ee7",
-    "versionLabel": "1.07",
+    "versionLabel": "1.9",
     "watchapp": {
         "watchface": true
     }
